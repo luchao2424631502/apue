@@ -22,6 +22,23 @@ Sigfunc *signal(int signo,Sigfunc *func) {
 	return oact.sa_handler;
 }
 
+Sigfunc *signal_intr(int signo,Sigfunc *func) {
+	struct sigaction act,oact;
+	// 处理程序
+	act.sa_handler = func;
+	// 初始化mask
+	sigemptyset(&act.sa_mask);
+	// 处理每个信号的可选标志
+	act.sa_flags = 0;
+#ifdef SA_INTERRUPT
+	// 力图阻止被中断的系统调用
+	ct.sa_flags |= SA_INTERRUPT;
+#endif
+	if (sigaction(signo,&act,&oact) < 0)
+		return SIG_ERR;
+	return oact.sa_handler;
+}
+
 // 思路,1.注册信号处理程序,修改mask,阻塞该信号,sleep 5s,然后sigpending判断是否阻塞,
 // 2.恢复mask,
 
