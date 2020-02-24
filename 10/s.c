@@ -1,10 +1,10 @@
 #include "apue.h" 
  
 int main(int argc,char *argv[]) {
-	psignal(SIGUSR1,"my definition ");
-	psignal(SIGUSR2,NULL);
+//	psignal(SIGUSR1,"my definition ");
 
-	for (int i=0; i<70; i++)
+	for (int i=1; i<=31; i++)
 		printf("%s\n",strsignal(i));
+	
     exit(0);
 }
