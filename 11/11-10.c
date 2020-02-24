@@ -75,8 +75,7 @@ const int maxn = 2500;
 
 int main(int argc,char *argv[]) {
 	pthread_t tid[maxn]; 
-	struct foo *p = foo_alloc(99);
-	// 3个线程的线程池
+	struct foo *p = foo_alloc(2);
 	for (int i=0; i<maxn; i++) 
 		pthread_create(&tid[i],NULL,func,(void *)p);
 
@@ -85,6 +84,6 @@ int main(int argc,char *argv[]) {
 		pthread_join(tid[i],NULL);
 	}
 	printf("f_use = %d\n",p->f_use);
-	free(p);
+	foo_rele(p);
     exit(0);
 }
