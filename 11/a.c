@@ -1,17 +1,17 @@
-#include "apue.h" 
-#include <pthread.h>
+#include <sys/time.h>
+#include <stdlib.h>
  
-int 
-main(int argc,char *argv[]) {
-	int err;
-	struct timespec tout;
-	struct tm *tmp;
-	char buf[64];
-	pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+void
+maketimeout(struct timespec *tsp,long minutes)
+{
+	struct timeval now;
+	gettimeofday(&now,NULL);
+	tsp->tv_sec = now.tv_sec;
+	tsp->tv_nsec = now.tv_usec * 1000;
+	tsp->tv_sec += minutes * 60;
+}
 
-	pthread_mutex_lock(&lock);
-	printf("mutex is locked\n");
-	clock_gettime(CLOCK_REALTIME,&tout);
-	tmp = localtime(&tout.tv_sec);
+int main(int argc,char *argv[]) {
+ 
     exit(0);
 }
