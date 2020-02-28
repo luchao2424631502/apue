@@ -1,2 +1,2 @@
 $(f): $(f).c
-	gcc $(f).c -o $(f)  -lapue -lpthread 
+	gcc $(f).c -o $(f)  -lapue -lpthread -lbsd 
