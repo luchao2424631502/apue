@@ -37,7 +37,7 @@ thr_fn(void *arg)
 {
 	long index = (long)arg;
 	heapsort(&nums[index],TNUM,sizeof(long),complong);
-	// 线程完成工作,等待其他所有线程赶上来
+	// 线程完成工作,等待其他所有线程赶上来,增加屏障计数
 	pthread_barrier_wait(&b);
 	return (void *)0;
 }
@@ -51,7 +51,7 @@ merge()
 	// 得到每个线程处理部分的下标
 	for (i = 0; i < NTHR; i++)
 		index[i] = i * TNUM;
-	// 扫描所有数字一遍,每一个数字从8个部分中选取,然后增加其中一部分的下标
+	// 扫描所有数字一遍,每一个数字从8个部分中选取,然后增加其中一部分的下标,８个部分都已经是排好序
 	for (sindex = 0; sindex < NUMNUM; sindex++) {
 		num = LONG_MAX;
 		for (i = 0; i <	NTHR; i++) {
@@ -84,7 +84,7 @@ int main(int argc,char *argv[]) {
 		if (err != 0)
 			err_exit(err,"can't create thread");
 	}
-	// 自己做完了,等到所有屏障前的线程
+	// 自己做完了,等到所有屏障前的线程,满足屏障计数后,所有线程都唤醒,
 	pthread_barrier_wait(&b);
 	merge();
 	gettimeofday(&end,NULL);
