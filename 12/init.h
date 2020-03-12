@@ -8,6 +8,9 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#include "apue.h"
+
 #include <pthread.h>
+
 
 #endif
