@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <time.h>
+#include <sys/time.h>
 
 #include "apue.h"
 
