@@ -2,40 +2,58 @@
     > File Name: a.c
     > Author: llc
     > Mail: 18271496687@163.com 
-    > Created Time: 2020年03月21日 星期六 21时54分48秒
+    > Created Time: 2020年03月24日 星期二 15时34分19秒
  ************************************************************************/
 
-#include <stdio.h> 
+#include "apue.h"
+#include <ctype.h>
 #include <fcntl.h>
-#include <unistd.h> 
-#include <sys/select.h>
 
-// 给　该文件描述符指定的文件(字节)加锁
-int lockfile(int fd) 
+#define BSZ 4096
+
+unsigned char buf[BSZ];
+
+unsigned char 
+translate(unsigned char c)
 {
-	struct flock lock;
-	lock.l_type = F_WRLCK;
-	lock.l_start = 0;
-	lock.l_whence = SEEK_SET;
-	lock.l_len = 0;
-
-	// file control 文件控制
-	return fcntl(fd,F_SETLK,&lock);
+	if (isalpha(c))
+	{
+		if (c >= 'n')
+			c -= 13;
+		else if (c >= 'a')
+			c += 13;
+		else if (c >= 'N')
+			c -= 13;
+		else 
+			c += 13;
+	}
+	return c;
 }
+ 
+int main(int argc,char *argv[]) 
+{ 
+	int ifd,ofd,i,n,nw;
+	if (argc != 3)
+		err_quit("usage: rotl3 infile outfile");
+	if ((ifd = open(argv[1],O_RDONLY)) < 0)
+		err_sys("can't open %s",argv[1]);
+	if ((ofd = open(argv[2],O_RDWR|O_CREAT|O_TRUNC,FILE_MODE)) < 0)
+		err_sys("can't create %s",argv[2]);
 
+	while((n = read(ifd,buf,BSZ)) > 0)
+	{
+		for (i=0; i<n; i++)
+			buf[i] = translate(buf[i]);
+		if ((nw = write(ofd,buf,n)) != n)
+		{
+			if (nw < 0)
+				err_sys("write failed");
+			else
+				err_quit("short write (%d/%d)",nw,n);
+		}
+	}
 
-int main(int argc,char *argv[]) {
-	fd_set readset,writeset;
-	FD_ZERO(&readset);
-	FD_ZERO(&wirteset);
-	FD_SET(0,&readset);
-	FD_SET(3,&readset);
-	FD_SET(1,&writeset);
-	FD_SET(2,&writeset);
-	
-	// select一直阻塞
-	select(4,&readset,&writeset,NULL,NULL);
-
-	printf("%d %d\n",FD_ISSET(3,&set),FD_ISSET(5,&set));
+	// 进程执行完毕前,将内核的延迟写都直接写入磁盘
+	fsync(ofd);
     return 0;
 }
