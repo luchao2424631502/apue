@@ -1,3 +1,3 @@
 #error=/usr/include/error.c
 $(f):$(f).c 
-	gcc $(f).c semutil.o -o $(f) -lapue 
+	gcc -std=c99 $(f).c semutil.o -o $(f) -lapue -lrt
